@@ -221,7 +221,7 @@ Your Hospital Management System should now be running locally.
 <br>Appointment tracking 
 <img width="1917" height="912" alt="image" src="https://github.com/user-attachments/assets/15f4d258-abfd-436b-a73f-a6bd230afb88" />
 <br>
-<br> Login section
+<br> Login section<br>
 <img width="720" height="285" alt="image" src="https://github.com/user-attachments/assets/7c64d07a-4b20-4cf5-aac6-c49c7c081dfe" />
 <br>
 <br> Edit profile
@@ -263,7 +263,7 @@ Your Hospital Management System should now be running locally.
 <img width="1916" height="919" alt="image" src="https://github.com/user-attachments/assets/b7034c51-a64f-4513-aad9-b78816281a8e" />
 
 <br>
-<br>Login 
+<br>Login <br>
 <img width="475" height="254" alt="image" src="https://github.com/user-attachments/assets/6cc60b16-09f4-4297-a6b7-7552a56828a4" />
 <br>
 <br>Change pass
