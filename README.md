@@ -50,7 +50,7 @@ Make sure the following are installed on your system:
 
 ---
 
-### 🔹 Step 1: Clone the Repository
+###  Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/tanya-1920/hospital-management-system.git
@@ -60,7 +60,7 @@ Or download the ZIP and extract it.
 
 ---
 
-### 🔹 Step 2: Move Project to XAMPP Directory
+###  Step 2: Move Project to XAMPP Directory
 
 * Navigate to your XAMPP installation folder
 * Open `htdocs`
@@ -79,7 +79,7 @@ C:\xampp\htdocs\hms
 
 ---
 
-### 🔹 Step 3: Start XAMPP Server
+###  Step 3: Start XAMPP Server
 
 * Open XAMPP Control Panel
 * Start the following services:
@@ -92,7 +92,7 @@ Make sure both are running (GREEN status)
 
 ---
 
-### 🔹 Step 4: Create Database
+###  Step 4: Create Database
 
 1. Open browser and go to:
 
@@ -110,7 +110,7 @@ hms
 (click on create)
 ---
 
-### 🔹 Step 5: Import Database
+###  Step 5: Import Database
 
 1. Select the `hms` database
 2. Click on **Import**
@@ -128,7 +128,7 @@ hms.sql
 
 ---
 
-### 🔹 Step 6: Configure Database Connection
+###  Step 6: Configure Database Connection
 
 Open the file:
 
@@ -138,7 +138,7 @@ hms/include/config.php
 
 ---
 
-### 🔹 Step 7: Run the Project
+###  Step 7: Run the Project
 
 Open browser and go to:
 
@@ -148,7 +148,7 @@ http://localhost/hms
 
 ---
 
-### 🔹 Step 8: Login credentials
+###  Step 8: Login credentials
 
 * Admin Panel: `http://localhost/hdmis/hms/admin/`
       <br>  USERNAME:
