@@ -84,7 +84,7 @@ if(strlen($_SESSION['id']==0)) {
 
 <div id="app">
 
-<?php include('include/sidebar.php'); ?>
+
 <?php include('include/header.php'); ?>
 
 <div class="main-content">
