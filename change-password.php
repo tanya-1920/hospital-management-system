@@ -161,7 +161,7 @@ function valid()
 
 <div id="app">
 
-<?php include('include/sidebar.php'); ?>
+
 <?php include('include/header.php'); ?>
 
 <div class="main-content">
