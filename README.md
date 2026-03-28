@@ -30,7 +30,7 @@ Hospital Management System (HDIMS) is a web-based Hospital Management System des
 ---
 
 
-##  Installation & Setup (Detailed Guide)
+##  Installation & Setup
 
 Follow the steps below to run the project locally on your system:
 
@@ -192,21 +192,21 @@ Your Hospital Management System should now be running locally.
 
 <br>
 <br>
-**LOGINS & SIGNUP**
+##LOGINS & SIGNUP
 <br>
-<br>Patient panel
+#<br>Patient panel
 <img width="1897" height="903" alt="image" src="https://github.com/user-attachments/assets/cd5d9755-1d4f-4df0-8de5-abc9970f57c6" />
 <img width="1895" height="901" alt="image" src="https://github.com/user-attachments/assets/b1986113-f018-44fc-aa5a-63423e898553" />
 <br>
-<br> Doctor Panel 
+#<br> Doctor Panel 
 <img width="1895" height="903" alt="image" src="https://github.com/user-attachments/assets/00cc88ec-46b1-4024-a049-6349e79cd175" />
 <br>
-<br> Admin Panel 
+#<br> Admin Panel 
 <img width="1898" height="900" alt="image" src="https://github.com/user-attachments/assets/ddfc7067-b66f-49ac-8bbd-e042bb5d3885" />
 <br>
 <br>
 
-**USER PANEL**
+###  USER PANEL 
 <br>
 <br> user Dashoard
 <img width="1893" height="913" alt="image" src="https://github.com/user-attachments/assets/b0af8585-94aa-42b6-a3a9-7cc75ccf0647" />
