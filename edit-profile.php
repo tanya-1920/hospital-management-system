@@ -77,7 +77,7 @@ if(isset($_POST['submit']))
 </head>
 <body>
     <div id="app">
-        <?php include('include/sidebar.php'); ?>
+       
         <div class="app-content">
             <?php include('include/header.php'); ?>
             <main class="container my-5">
