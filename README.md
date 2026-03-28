@@ -190,33 +190,47 @@ Your Hospital Management System should now be running locally.
 <br>Contact
 <img width="1892" height="920" alt="image" src="https://github.com/user-attachments/assets/17de0d73-1845-45e2-ab1c-e7ed4453d1a9" />
 
-
+<br>
+<br>
 **LOGINS & SIGNUP**
+<br>
 <br>Patient panel
 <img width="1897" height="903" alt="image" src="https://github.com/user-attachments/assets/cd5d9755-1d4f-4df0-8de5-abc9970f57c6" />
 <img width="1895" height="901" alt="image" src="https://github.com/user-attachments/assets/b1986113-f018-44fc-aa5a-63423e898553" />
+<br>
 <br> Doctor Panel 
 <img width="1895" height="903" alt="image" src="https://github.com/user-attachments/assets/00cc88ec-46b1-4024-a049-6349e79cd175" />
+<br>
 <br> Admin Panel 
 <img width="1898" height="900" alt="image" src="https://github.com/user-attachments/assets/ddfc7067-b66f-49ac-8bbd-e042bb5d3885" />
-
+<br>
+<br>
 
 **USER PANEL**
-
+<br>
 <br> user Dashoard
 <img width="1893" height="913" alt="image" src="https://github.com/user-attachments/assets/b0af8585-94aa-42b6-a3a9-7cc75ccf0647" />
 <img width="1900" height="395" alt="image" src="https://github.com/user-attachments/assets/6ce91495-3f0c-4dec-83fb-8c7c7fc61af0" />
-
+<br>
+<br> Appointment booking form
 <img width="1899" height="920" alt="image" src="https://github.com/user-attachments/assets/aa3f036d-e35b-43ad-9fd0-8a0e017ed814" />
-
+<br>
+<br> Appointment history
 <img width="1882" height="925" alt="image" src="https://github.com/user-attachments/assets/883a9b37-4a08-46b1-b86e-cdf248883656" />
+<br>
+<br>Appointment tracking 
 <img width="1917" height="912" alt="image" src="https://github.com/user-attachments/assets/15f4d258-abfd-436b-a73f-a6bd230afb88" />
-
+<br>
+<br> Login section
 <img width="720" height="285" alt="image" src="https://github.com/user-attachments/assets/7c64d07a-4b20-4cf5-aac6-c49c7c081dfe" />
-
+<br>
+<br> Edit profile
 <img width="1916" height="916" alt="image" src="https://github.com/user-attachments/assets/c0aebd5b-810c-4c0a-a798-1741df51399a" />
+<br>
+<br> Password change 
 <img width="1913" height="914" alt="image" src="https://github.com/user-attachments/assets/24b23dba-fa5c-4c48-ade0-e66b75c6913b" />
-
+<br>
+<br>Loader
 <img width="1914" height="912" alt="image" src="https://github.com/user-attachments/assets/efbcbdc1-cad5-45e3-8953-f289578e3631" />
 
 
