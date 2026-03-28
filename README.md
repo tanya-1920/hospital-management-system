@@ -234,6 +234,45 @@ Your Hospital Management System should now be running locally.
 <img width="1914" height="912" alt="image" src="https://github.com/user-attachments/assets/efbcbdc1-cad5-45e3-8953-f289578e3631" />
 
 
+<br>
+<br>
+<br>
+###  DOCTOR PANEL 
+ <br>
+<br> Dashoard
+<img width="1891" height="918" alt="image" src="https://github.com/user-attachments/assets/a4986361-639f-477d-ab71-59e3e4389013" />
+<img width="1885" height="919" alt="image" src="https://github.com/user-attachments/assets/a1b34e3d-1062-4e85-afef-226357cc6b39" />
+ <br>
+<br> Edit profile
+<img width="1890" height="920" alt="image" src="https://github.com/user-attachments/assets/03095037-85a6-4b2a-8a57-e2ccc572302b" />
+ <br>
+<br> Appointment record
+<img width="1915" height="915" alt="image" src="https://github.com/user-attachments/assets/83b01c88-784f-4c06-a17b-263e0635a889" />
+ <br>
+<br> Edit patient
+<img width="1892" height="921" alt="image" src="https://github.com/user-attachments/assets/6ecbd8bb-ecb3-4a57-81f3-528ae84f2660" />
+<img width="1908" height="920" alt="image" src="https://github.com/user-attachments/assets/3254cfcd-7fe1-4669-8c8f-69fe24bb8139" />
+<img width="1912" height="920" alt="image" src="https://github.com/user-attachments/assets/7043b0b7-3b17-4678-a284-0e74dfa2590f" />
+<img width="1873" height="920" alt="image" src="https://github.com/user-attachments/assets/a63865ad-df0d-4dd0-b081-3365d19ad701" />
+
+ <br>
+<br> Pending Appointments
+<img width="1913" height="919" alt="image" src="https://github.com/user-attachments/assets/36b8cb46-0300-4da4-847d-4fd417602ee4" />
+<br>
+<br> Search patient
+<img width="1916" height="919" alt="image" src="https://github.com/user-attachments/assets/b7034c51-a64f-4513-aad9-b78816281a8e" />
+
+<br>
+<br>Login 
+<img width="475" height="254" alt="image" src="https://github.com/user-attachments/assets/6cc60b16-09f4-4297-a6b7-7552a56828a4" />
+<br>
+<br>Change pass
+<img width="1913" height="913" alt="image" src="https://github.com/user-attachments/assets/b268a476-7017-4225-b0b7-6cb10d921953" />
+
+
+
+
+
 
 
 ---
