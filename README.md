@@ -206,7 +206,7 @@ Your Hospital Management System should now be running locally.
 <br>
 <br>
 
-###  USER PANEL 
+###  USER PANEL
 <br>
 <br> user Dashoard
 <img width="1893" height="913" alt="image" src="https://github.com/user-attachments/assets/b0af8585-94aa-42b6-a3a9-7cc75ccf0647" />
@@ -269,10 +269,42 @@ Your Hospital Management System should now be running locally.
 <br>Change pass
 <img width="1913" height="913" alt="image" src="https://github.com/user-attachments/assets/b268a476-7017-4225-b0b7-6cb10d921953" />
 
+###  AdminPanel
+<br>
+<br>Dashboard 
+<img width="1894" height="915" alt="image" src="https://github.com/user-attachments/assets/a987f280-91d5-4ebc-95e5-3d9d4e396b25" />
+<img width="1903" height="917" alt="image" src="https://github.com/user-attachments/assets/0dae64e3-d54f-49c9-ab3f-07cbab5b7a1a" />
 
+<br>
+<br>Doctor section
+<img width="1912" height="916" alt="image" src="https://github.com/user-attachments/assets/d4c7ba20-cdb8-46c1-ad47-139857803a9a" />
+<img width="1846" height="918" alt="image" src="https://github.com/user-attachments/assets/0535388d-d97e-4957-adcf-22bb993d86b5" />
+<img width="1914" height="911" alt="image" src="https://github.com/user-attachments/assets/7d4e5996-a08d-4d4c-b5fd-6d1e344a3723" />
+<img width="1913" height="911" alt="image" src="https://github.com/user-attachments/assets/8422eeb4-b95f-473d-b069-c6781558708f" />
+<br>
+<br>User section
+<img width="1911" height="907" alt="image" src="https://github.com/user-attachments/assets/e914e344-d256-42b9-b3dc-137ea9557c13" />
+<br>
+<br> Patient section
+<img width="1900" height="917" alt="image" src="https://github.com/user-attachments/assets/a1a3a479-efbf-4207-8538-d738a691773e" />
+<img width="1915" height="914" alt="image" src="https://github.com/user-attachments/assets/073d82db-36e6-4b33-9518-e3586923db4e" />
 
+<br>
+<br> Appointment History
+<img width="1914" height="912" alt="image" src="https://github.com/user-attachments/assets/fa8786a4-819d-4010-9d05-9a2681a6a036" />
+<br>
+<br>  Queries section
+<img width="1897" height="903" alt="image" src="https://github.com/user-attachments/assets/c228cfe4-5666-48fb-8def-9910c03ef2dc" />
+<img width="1913" height="917" alt="image" src="https://github.com/user-attachments/assets/d3b455cb-75e7-4bbd-b625-a50f9247f442" />
+<img width="1910" height="913" alt="image" src="https://github.com/user-attachments/assets/93600bb2-8f54-422a-b58f-9ff6979421a2" />
+<br>
+<br>Logs section
+<img width="1910" height="918" alt="image" src="https://github.com/user-attachments/assets/ecea5236-897d-466e-9e91-05633535fef5" />
+<img width="1917" height="912" alt="image" src="https://github.com/user-attachments/assets/408eb46b-441b-4271-9a5a-527d3dcde0c2" />
 
-
+<br>
+<br>Reports section
+<img width="1884" height="917" alt="image" src="https://github.com/user-attachments/assets/572ba677-abfb-4362-8492-4471dc4e7058" />
 
 
 ---
