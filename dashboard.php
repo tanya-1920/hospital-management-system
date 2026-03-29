@@ -33,14 +33,12 @@ check_login();
             width: 100% !important;
         }
 
-        /* CENTERED CONTAINER */
         .wrap-content {
             max-width: 1200px;
             margin: auto;
             padding: 30px 20px;
         }
 
-        /* Dashboard cards */
         .dashboard-box {
             border-radius: 12px;
             min-height: 230px;
@@ -79,14 +77,12 @@ check_login();
 
 <div id="app">
 
-
 <div class="app-content">
 
 <?php include('include/header.php'); ?>
 
 <div class="main-content">
 
-<!-- ✅ CENTERED CONTENT -->
 <div class="wrap-content" id="container">
 
 <!-- PAGE TITLE -->
@@ -196,6 +192,7 @@ check_login();
 
             <div class="col-sm-6 col-md-3">
                 <div class="coming-box">
+                    <i class="coming-box">
                     <i class="fa fa-mobile fa-2x text-warning"></i>
                     <h5>Mobile App</h5>
                     <p>Access on mobile devices</p>
@@ -206,14 +203,14 @@ check_login();
     </div>
 </div>
 
-</div>
-</div>
-</div>
+</div> <!-- wrap-content -->
+</div> <!-- main-content -->
+</div> <!-- app-content -->
+
+<?php include('include/setting.php'); ?>
+</div> <!-- #app -->
 
 <?php include('include/footer.php'); ?>
-<?php include('include/setting.php'); ?>
-
-</div>
 
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
