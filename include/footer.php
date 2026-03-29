@@ -5,6 +5,11 @@
     <p id="voiceText">Click mic and speak...</p>
 </div>
 
+<!-- 👤 Username -->
+<script>
+let username = "<?php echo $_SESSION['name'] ?? 'User'; ?>";
+</script>
+
 <style>
 #voiceAssistant {
   position: fixed;
@@ -24,10 +29,7 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   transition: 0.3s;
 }
-
-#voiceAssistant:hover {
-  transform: scale(1.1);
-}
+#voiceAssistant:hover { transform: scale(1.1); }
 
 #voicePopup {
   position: fixed;
@@ -38,24 +40,35 @@
   padding: 10px 15px;
   border-radius: 10px;
   display: none;
-  max-width: 250px;
-  font-size: 14px;
+  max-width: 260px;
 }
 </style>
 
 <script>
 
-//  Assistant State
-let assistantState = {
-    mode: "idle"
-};
 
-//  Start on click
+//  STATE
+
+let isSpeaking = false;
+
+
+//  MIC CLICK
+
 document.getElementById("voiceAssistant").onclick = function(){
+
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+        isSpeaking = false;
+        document.getElementById("voiceText").innerText = "Stopped";
+        return;
+    }
+
     startListening();
 };
 
-//  Speech Recognition
+
+// LISTENING & COMMAND HANDLING
+
 function startListening(){
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
@@ -73,26 +86,66 @@ function startListening(){
     };
 }
 
-//  Voice Response
+
+//  SPEAK function
+
 function speak(text){
+    speechSynthesis.cancel();
     let speech = new SpeechSynthesisUtterance(text);
     speech.rate = 0.9;
-    speech.pitch = 1;
-    window.speechSynthesis.speak(speech);
+
+    speech.onend = () => { isSpeaking = false; };
+
+    isSpeaking = true;
+    speechSynthesis.speak(speech);
 }
 
-//  Smart Field Fill
+
+//  GREETING
+
+function getGreeting(){
+    let hour = new Date().getHours();
+    if(hour < 12) return "Good morning";
+    if(hour < 17) return "Good afternoon";
+    return "Good evening";
+}
+
+//   SCREEN READ
+
+function readSmartScreen(){
+
+    let greeting = getGreeting();
+    let title = document.title;
+
+    let message = `${greeting} ${username}. `;
+    message += `You are on the ${title}. `;
+
+    let sections = document.querySelectorAll("h1, h2, h3, h4");
+
+    if(sections.length > 0){
+        message += "Sections include ";
+        sections.forEach((sec, i) => {
+            if(i < 5){
+                message += sec.innerText + ", ";
+            }
+        });
+    }
+
+    speak(message);
+}
+
+
+//  FORM FILL
+
 function fillField(label, value){
     let inputs = document.querySelectorAll("input, textarea, select");
 
     inputs.forEach(input => {
-        let placeholder = (input.placeholder || "").toLowerCase();
-        let name = (input.name || "").toLowerCase();
-        let id = (input.id || "").toLowerCase();
+        let text = (input.placeholder || input.name || input.id || "").toLowerCase();
 
-        if(placeholder.includes(label) || name.includes(label) || id.includes(label)){
+        if(text.includes(label)){
             if(input.tagName === "SELECT"){
-                for(let i=0; i<input.options.length; i++){
+                for(let i=0;i<input.options.length;i++){
                     if(input.options[i].text.toLowerCase().includes(value)){
                         input.selectedIndex = i;
                     }
@@ -104,87 +157,129 @@ function fillField(label, value){
     });
 }
 
-//  MAIN AI COMMAND HANDLER
+//  MAIN 
+
 function handleCommand(command){
 
-    //  NAVIGATION
-    if(command.includes("open dashboard")){
-        speak("Opening dashboard");
-        window.location.href = "dashboard.php";
-    }
+    let wantsHelp = command.includes("help");
+    let wantsOpen = command.includes("open") || command.includes("show");
+    let wantsAppointments = command.includes("appointment");
+    let wantsToday = command.includes("today");
+    let wantsTomorrow = command.includes("tomorrow");
+    let wantsFees = command.includes("fees");
 
-    else if(command.includes("open appointments") || command.includes("my appointments")){
-        speak("Opening your appointments");
-        window.location.href = "appointment-history.php";
-    }
-
-    else if(command.includes("book appointment")){
+    //  BOOK APPOINTMENT
+    if(wantsAppointments && command.includes("book")){
+        if(wantsHelp){
+            speak("To book an appointment, select doctor, choose date and time, then submit.");
+        }
         speak("Opening booking page");
         window.location.href = "book-appointment.php";
     }
 
-    else if(command.includes("edit profile")){
-        speak("Opening edit profile");
+    //  OPEN HISTORY
+    else if(wantsAppointments && (wantsOpen || command.includes("history"))){
+        speak("Opening appointment history");
+        window.location.href = "appointment-history.php";
+    }
+
+    //  ANSWER APPOINTMENTS
+    else if(wantsAppointments){
+
+        let rows = document.querySelectorAll("table tbody tr");
+
+        if(rows.length === 0){
+            speak("No appointment data found here");
+            return;
+        }
+
+        let today = new Date().toISOString().split("T")[0];
+        let tomorrowDate = new Date();
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        let tomorrow = tomorrowDate.toISOString().split("T")[0];
+
+        let results = [];
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+
+            if(wantsToday && text.includes(today)){
+                results.push(row.innerText);
+            }
+            else if(wantsTomorrow && text.includes(tomorrow)){
+                results.push(row.innerText);
+            }
+            else if(!wantsToday && !wantsTomorrow){
+                results.push(row.innerText);
+            }
+        });
+
+        if(results.length === 0){
+            speak("No matching appointments found");
+            return;
+        }
+
+        speak(`You have ${results.length} appointments`);
+
+        results.slice(0,2).forEach(r => speak(r));
+    }
+
+    //  FEES
+    else if(wantsFees){
+        let text = document.body.innerText.toLowerCase();
+        let matches = text.match(/₹?\s?\d+/g);
+
+        if(matches){
+            speak("Fees found are " + matches.slice(0,3).join(", "));
+        } else {
+            speak("No fee data found");
+        }
+    }
+
+    //  PROFILE
+    else if(command.includes("profile")){
+        if(wantsHelp){
+            speak("To edit profile, update details and click update.");
+        }
+        speak("Opening profile");
         window.location.href = "edit-profile.php";
     }
 
-    //  HELP MODE
-    else if(command.includes("help")){
-        speak("You can say open dashboard, book appointment, or edit profile. You can also say name, email, or submit.");
+    // DASHBOARD
+    else if(command.includes("dashboard")){
+        speak("Opening dashboard");
+        window.location.href = "dashboard.php";
     }
 
-    //  FORM INPUTS
+    //  FORM FILL
     else if(command.includes("name")){
-        let value = command.replace("name", "").trim();
-        fillField("name", value);
+        fillField("name", command.replace("name","").trim());
         speak("Name added");
     }
 
     else if(command.includes("email")){
-        let value = command.replace("email", "").trim();
-        fillField("email", value);
+        fillField("email", command.replace("email","").trim());
         speak("Email added");
     }
 
     else if(command.includes("phone")){
-        let value = command.replace("phone", "").trim();
-        fillField("phone", value);
-        speak("Phone number added");
+        fillField("phone", command.replace("phone","").trim());
+        speak("Phone added");
     }
 
     else if(command.includes("date")){
-        let value = command.replace("date", "").trim();
-        fillField("date", value);
+        fillField("date", command.replace("date","").trim());
         speak("Date added");
     }
 
     else if(command.includes("time")){
-        let value = command.replace("time", "").trim();
-        fillField("time", value);
+        fillField("time", command.replace("time","").trim());
         speak("Time added");
     }
 
-    else if(command.includes("doctor")){
-        let value = command.replace("doctor", "").trim();
-        fillField("doctor", value);
-        speak("Doctor selected");
-    }
-
-    //  GENERIC WRITE
-    else if(command.includes("write")){
-        let text = command.replace("write", "").trim();
-        let input = document.querySelector("input, textarea");
-
-        if(input){
-            input.value = text;
-            speak("Added " + text);
-        }
-    }
-
-    //  SUBMIT FORM
-    else if(command.includes("submit") || command.includes("update") || command.includes("save")){
+    //  SUBMIT
+    else if(command.includes("submit") || command.includes("update")){
         let form = document.querySelector("form");
-
         if(form){
             speak("Submitting form");
             form.submit();
@@ -193,12 +288,12 @@ function handleCommand(command){
 
     //  READ SCREEN
     else if(command.includes("read screen")){
-        speak(document.body.innerText);
+        readSmartScreen();
     }
 
-    //  UNKNOWN COMMAND 
+    //  DEFAULT
     else{
-        speak("Command not understood");
+        speak("I understood partially. Try asking about appointments or say help.");
     }
 }
 
