@@ -3,9 +3,25 @@
 <!--  Voice Button -->
 <div id="voiceAssistant">🎤</div>
 
-<!--  Chat UI -->
-<div id="assistantChat">
+<!--  Assistant Panel (Hidden initially) -->
+<div id="assistantPanel" class="hidden">
+
+    <!-- HEADER -->
+    <div id="assistantHeader">
+        <span>HMS Assistant</span>
+        <button id="toggleChat">×</button>
+    </div>
+
+    <!-- CHAT BODY -->
     <div id="chatBody"></div>
+
+    <!-- LISTENING INDICATOR -->
+    <div id="listeningIndicator" class="hidden">
+        <div class="dot-bubble">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -13,6 +29,7 @@ let username = "<?php echo $_SESSION['name'] ?? 'User'; ?>";
 </script>
 
 <style>
+/* 🎤 Voice Button */
 #voiceAssistant {
   position: fixed;
   bottom: 25px;
@@ -27,62 +44,160 @@ let username = "<?php echo $_SESSION['name'] ?? 'User'; ?>";
   justify-content: center;
   cursor: pointer;
   z-index: 9999;
+  font-size: 24px;
 }
 
-/* Chat UI */
-#assistantChat {
+/* PANEL */
+#assistantPanel {
   position: fixed;
   bottom: 100px;
   right: 25px;
-  width: 300px;
-  max-height: 350px;
+  width: 350px;
+  height: 450px;
   background: #0f172a;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* HIDDEN STATE */
+.hidden {
+  display: none;
+}
+
+/* HEADER */
+#assistantHeader {
+  background: #1e293b;
+  padding: 10px 12px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: white;
-  border-radius: 10px;
-  overflow-y: auto;
+}
+
+/* CLOSE BUTTON */
+#toggleChat {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* BODY */
+#chatBody {
+  flex: 1;
   padding: 10px;
+  overflow-y: auto;
   font-size: 13px;
 }
 
+/* MESSAGES */
 .message {
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 8px;
+  margin: 6px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  max-width: 80%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.user { background: #1d4ed8; text-align: right; }
-.bot { background: #1e293b; }
+/* USER MESSAGE */
+.user {
+  background: #2563eb;
+  color: #ffffff;
+  margin-left: auto;
+  text-align: right;
+}
 
+/* BOT MESSAGE */
+.bot {
+  background: #1e293b;
+  color: #e5e7eb;
+}
+
+/* HIGHLIGHT ROW */
 .highlight {
   outline: 3px solid red;
-  transition: 0.3s;
+  transition: outline 0.3s ease-in-out;
+}
+
+/* LISTENING INDICATOR (aligned right) */
+#listeningIndicator {
+  display: flex;
+  justify-content: flex-end; /* right aligned */
+  padding: 5px 10px;
+}
+
+.dot-bubble {
+  background: #2563eb;
+  border-radius: 20px;
+  padding: 6px 10px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dot-bubble span {
+  width: 6px; height: 6px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: bounce 1.2s infinite;
+}
+
+.dot-bubble span:nth-child(1){ animation-delay: 0s; }
+.dot-bubble span:nth-child(2){ animation-delay: 0.2s; }
+.dot-bubble span:nth-child(3){ animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.2; }
+  40% { transform: scale(1); opacity: 1; }
 }
 </style>
 
 <script>
-
-// ======================
-// STATE
-// ======================
+// ====================== STATE
 let state = {
     currentField: null,
     pendingCancel: null,
-    lastDeletedRow: null
+    lastDeletedRow: null,
+    firstOpen: true
 };
 
-// ======================
-// CHAT UI
-// ======================
+let panel = document.getElementById("assistantPanel");
+let chatBody = document.getElementById("chatBody");
+let listeningIndicator = document.getElementById("listeningIndicator");
+
+// ====================== LOAD CHAT HISTORY
+function loadChat(){
+    let saved = localStorage.getItem("chatHistory");
+    if(saved){
+        chatBody.innerHTML = saved;
+        chatBody.scrollTop = chatBody.scrollHeight;
+        state.firstOpen = false;
+    }
+}
+
+// ====================== SAVE CHAT
+function saveChat(){
+    localStorage.setItem("chatHistory", chatBody.innerHTML);
+}
+
+// ====================== ADD MESSAGE
 function addMessage(text, type){
     let msg = document.createElement("div");
     msg.className = "message " + type;
     msg.innerText = text;
-    document.getElementById("chatBody").appendChild(msg);
+    chatBody.appendChild(msg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    saveChat();
 }
 
-// ======================
-// SPEAK
-// ======================
+// ====================== SPEAK
 function speak(text){
     speechSynthesis.cancel();
     let speech = new SpeechSynthesisUtterance(text);
@@ -91,204 +206,171 @@ function speak(text){
     addMessage(text, "bot");
 }
 
-// ======================
-// LISTEN
-// ======================
+// ====================== MIC CLICK
 document.getElementById("voiceAssistant").onclick = function(){
+    panel.classList.remove("hidden");
 
-    if (speechSynthesis.speaking) {
-        speechSynthesis.cancel();
-        return;
+    if(state.firstOpen){
+        addMessage("Hello " + username + ", click the mic and speak a command.", "bot");
+        state.firstOpen = false;
     }
 
+    startListening();
+};
+
+// ====================== CLOSE CHAT
+document.getElementById("toggleChat").onclick = function(){
+    panel.classList.add("hidden");
+    listeningIndicator.classList.add("hidden");
+};
+
+// ====================== START LISTENING
+function startListening(){
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.interimResults = false;
+
+    listeningIndicator.classList.remove("hidden"); // show 3 dots
     recognition.start();
 
     recognition.onresult = function(e){
         let command = e.results[0][0].transcript.toLowerCase();
         addMessage(command, "user");
         processCommand(command);
+        listeningIndicator.classList.add("hidden"); // hide after command received
     };
-};
 
-// ======================
-// FIND FIELD
-// ======================
-function findField(label){
-    let inputs = document.querySelectorAll("input, textarea");
+    recognition.onerror = function(e){
+        speak("Sorry, I couldn't hear you. Please try again.");
+        listeningIndicator.classList.add("hidden"); // hide on error
+    };
 
-    for(let input of inputs){
-        let text = (input.placeholder || input.name || input.id || "").toLowerCase();
-        if(text.includes(label)) return input;
-    }
-    return null;
+    recognition.onend = function(){
+        listeningIndicator.classList.add("hidden"); // hide if stopped
+    };
 }
 
-// ======================
-// HIGHLIGHT ROW
-// ======================
-function highlightRow(row){
-    row.classList.add("highlight");
-    setTimeout(()=>row.classList.remove("highlight"), 2000);
-}
-
-// ======================
-// CANCEL EXECUTION
-// ======================
+// ====================== EXECUTE CANCEL
 function executeCancel(number){
-
     let rows = document.querySelectorAll("table tbody tr");
-
     if(number <= 0 || number > rows.length){
         speak("Invalid appointment number");
         return;
     }
-
     let row = rows[number - 1];
-    highlightRow(row);
-
+    row.classList.add("highlight");
     state.lastDeletedRow = row.cloneNode(true);
-
     let btn = row.querySelector(".btn-danger, .cancel-btn, a[href*='cancel'], button");
+    if(btn){ btn.click(); speak("Appointment cancelled"); }
+}
 
-    if(btn){
-        btn.click();
-        speak("Appointment cancelled");
+// ====================== READ SCREEN
+function readScreen() {
+    let text = "";
+
+    //  Current page
+    let url = window.location.href;
+    if (url.includes("dashboard.php")) {
+        text += "You are currently on the Dashboard. ";
+    } else if (url.includes("appointment-history.php")) {
+        text += "You are on the Appointment History page. ";
+    } else if (url.includes("book-appointment.php")) {
+        text += "You are on the Book Appointment page. ";
+    } else if (url.includes("edit-profile.php")) {
+        text += "You are on your Profile page. ";
     } else {
-        speak("Cancel button not found");
+        text += "You are on " + document.title + ". ";
+    }
+
+    //  Page summary
+    if (url.includes("dashboard.php")) {
+        let appointments = document.querySelectorAll("table tbody tr");
+        text += appointments.length > 0 ? "You have " + appointments.length + " upcoming appointments. " : "You have no upcoming appointments. ";
+    }
+
+    if (url.includes("appointment-history.php")) {
+        let rows = document.querySelectorAll("table tbody tr");
+        text += rows.length > 0 ? "Your appointment history contains " + rows.length + " records. " : "You have no appointment history. ";
+    }
+
+    if (url.includes("edit-profile.php")) {
+        let nameField = document.querySelector("input[name='name'], input#name");
+        if(nameField) text += "Your profile name is " + nameField.value + ". ";
+        let emailField = document.querySelector("input[name='email'], input#email");
+        if(emailField) text += "Your email is " + emailField.value + ". ";
+    }
+
+    //  Read headings and paragraphs
+    let elements = document.querySelectorAll("h1,h2,h3,h4,h5,h6,p");
+    let count = 0;
+    for(let el of elements){
+        if(el.offsetParent !== null){
+            text += el.innerText + ". ";
+            count++;
+        }
+        if(count >= 20) break;
+    }
+
+    // 4️⃣ Fallback
+    if(text.trim() === ""){
+        speak("No readable content found on this page.");
+    } else {
+        speak(text);
     }
 }
 
-// ======================
-// MAIN COMMAND ENGINE
-// ======================
+// ====================== MAIN COMMAND ENGINE
 function processCommand(command){
-
-    // ------------------
-    // CONFIRMATION FLOW
-    // ------------------
     if(state.pendingCancel){
-
         if(command.includes("yes")){
             executeCancel(state.pendingCancel);
-            state.pendingCancel = null;
+        } else {
+            speak("Cancelled action aborted");
         }
-        else{
-            speak("Cancellation aborted");
-            state.pendingCancel = null;
-        }
+        state.pendingCancel = null;
         return;
     }
 
-    // ------------------
-    // CANCEL REQUEST
-    // ------------------
-    if(command.includes("cancel") || command.includes("delete")){
-
+    if(command.includes("cancel")){
         let match = command.match(/\d+/);
-
         if(match){
             let num = parseInt(match[0]);
-
             state.pendingCancel = num;
             speak("Are you sure you want to cancel appointment " + num + "?");
         }
-        else{
-            speak("Please specify appointment number");
-        }
-    }
-
-    // ------------------
-    // UNDO
-    // ------------------
-    else if(command.includes("undo")){
-
+    } else if(command.includes("undo")){
         if(state.lastDeletedRow){
-            let table = document.querySelector("table tbody");
-            table.appendChild(state.lastDeletedRow);
-            speak("Last cancellation undone");
-        } else {
-            speak("Nothing to undo");
+            document.querySelector("table tbody").appendChild(state.lastDeletedRow);
+            speak("Undo successful");
         }
-    }
-
-    // ------------------
-    // SUBMIT
-    // ------------------
-    else if(command.includes("submit") || command.includes("save")){
-
-        let btn = document.querySelector(
-            "button[type='submit'], input[type='submit'], .btn-primary, .btn-success"
-        );
-
-        if(btn){
-            speak("Submitting form");
-            btn.click();
-        } else {
-            speak("Submit button not found");
-        }
-    }
-
-    // ------------------
-    // UPDATE FIELD
-    // ------------------
-    else if(command.includes("update") || command.includes("change")){
-
-        if(command.includes("name")){
-            state.currentField = "name";
-            speak("What should I change your name to?");
-        }
-        else if(command.includes("email")){
-            state.currentField = "email";
-            speak("What is the new email?");
-        }
-    }
-
-    else if(command.includes("from") && command.includes("to")){
-
-        let newVal = command.split("to")[1].trim();
-
-        if(state.currentField){
-            let field = findField(state.currentField);
-
-            if(field){
-                field.value = newVal;
-                speak("Updated successfully");
-            }
-        }
-    }
-
-    // ------------------
-    // NAVIGATION
-    // ------------------
-    else if(command.includes("appointment")){
-
+    } else if(command.includes("submit") || command.includes("save")){
+        let btn = document.querySelector("button[type='submit'], input[type='submit'], .btn-primary, .btn-success");
+        if(btn){ speak("Submitting form"); btn.click(); }
+    } else if(command.includes("appointment")){
         if(command.includes("book")){
             speak("Opening booking page");
             window.location.href = "book-appointment.php";
-        }
-
-        else{
+        } else {
             speak("Opening appointment history");
             window.location.href = "appointment-history.php";
         }
-    }
-
-    else if(command.includes("profile")){
+    } else if(command.includes("profile")){
         speak("Opening profile");
         window.location.href = "edit-profile.php";
-    }
-
-    else if(command.includes("dashboard")){
+    } else if(command.includes("dashboard")){
         speak("Opening dashboard");
         window.location.href = "dashboard.php";
-    }
-
-    else{
+    } else if(command.includes("read screen")){
+        readScreen();
+    } else if(command.includes("time")){
+        let now = new Date();
+        speak("Current time is " + now.toLocaleTimeString());
+    } else{
         speak("Command not understood");
     }
 }
 
+// ====================== INIT
+loadChat();
 </script>
 
 </body>
