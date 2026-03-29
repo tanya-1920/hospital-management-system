@@ -1,11 +1,11 @@
-<!-- 🎤 Voice Assistant -->
+<!-- Voice Assistant UI -->
 <div id="voiceAssistant">🎤</div>
 
 <div id="voicePopup">
     <p id="voiceText">Click mic and speak...</p>
 </div>
 
-<!-- 👤 Username -->
+<!-- Pass username from session -->
 <script>
 let username = "<?php echo $_SESSION['name'] ?? 'User'; ?>";
 </script>
@@ -29,7 +29,10 @@ let username = "<?php echo $_SESSION['name'] ?? 'User'; ?>";
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   transition: 0.3s;
 }
-#voiceAssistant:hover { transform: scale(1.1); }
+
+#voiceAssistant:hover {
+  transform: scale(1.1);
+}
 
 #voicePopup {
   position: fixed;
@@ -41,24 +44,27 @@ let username = "<?php echo $_SESSION['name'] ?? 'User'; ?>";
   border-radius: 10px;
   display: none;
   max-width: 260px;
+  font-size: 14px;
 }
 </style>
 
 <script>
 
+// ======================
+// STATE MANAGEMENT
+// ======================
+let assistantState = {
+    isSpeaking: false,
+    currentField: null
+};
 
-//  STATE
-
-let isSpeaking = false;
-
-
-//  MIC CLICK
-
+// ======================
+// MIC CLICK HANDLER
+// ======================
 document.getElementById("voiceAssistant").onclick = function(){
 
     if (speechSynthesis.speaking) {
         speechSynthesis.cancel();
-        isSpeaking = false;
         document.getElementById("voiceText").innerText = "Stopped";
         return;
     }
@@ -66,9 +72,9 @@ document.getElementById("voiceAssistant").onclick = function(){
     startListening();
 };
 
-
-// LISTENING & COMMAND HANDLING
-
+// ======================
+// SPEECH RECOGNITION
+// ======================
 function startListening(){
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
@@ -82,27 +88,31 @@ function startListening(){
         let command = event.results[0][0].transcript.toLowerCase();
         document.getElementById("voiceText").innerText = command;
 
-        handleCommand(command);
+        processCommand(command);
     };
 }
 
-
-//  SPEAK function
-
+// ======================
+// TEXT TO SPEECH
+// ======================
 function speak(text){
     speechSynthesis.cancel();
+
     let speech = new SpeechSynthesisUtterance(text);
     speech.rate = 0.9;
 
-    speech.onend = () => { isSpeaking = false; };
+    assistantState.isSpeaking = true;
 
-    isSpeaking = true;
+    speech.onend = function(){
+        assistantState.isSpeaking = false;
+    };
+
     speechSynthesis.speak(speech);
 }
 
-
-//  GREETING
-
+// ======================
+// GREETING + TIME
+// ======================
 function getGreeting(){
     let hour = new Date().getHours();
     if(hour < 12) return "Good morning";
@@ -110,23 +120,50 @@ function getGreeting(){
     return "Good evening";
 }
 
-//   SCREEN READ
+function tellTime(){
+    let time = new Date().toLocaleTimeString();
+    speak("The current time is " + time);
+}
 
+function tellDate(){
+    let date = new Date().toDateString();
+    speak("Today is " + date);
+}
+
+// ======================
+// FIND INPUT FIELD
+// ======================
+function findField(label){
+    let inputs = document.querySelectorAll("input, textarea");
+
+    for(let input of inputs){
+        let text = (input.placeholder || input.name || input.id || "").toLowerCase();
+
+        if(text.includes(label)){
+            return input;
+        }
+    }
+    return null;
+}
+
+// ======================
+// SMART SCREEN READING
+// ======================
 function readSmartScreen(){
 
     let greeting = getGreeting();
     let title = document.title;
 
-    let message = `${greeting} ${username}. `;
-    message += `You are on the ${title}. `;
+    let message = greeting + " " + username + ". ";
+    message += "You are on " + title + ". ";
 
-    let sections = document.querySelectorAll("h1, h2, h3, h4");
+    let headings = document.querySelectorAll("h1, h2, h3");
 
-    if(sections.length > 0){
+    if(headings.length > 0){
         message += "Sections include ";
-        sections.forEach((sec, i) => {
-            if(i < 5){
-                message += sec.innerText + ", ";
+        headings.forEach((h, i) => {
+            if(i < 4){
+                message += h.innerText + ", ";
             }
         });
     }
@@ -134,115 +171,109 @@ function readSmartScreen(){
     speak(message);
 }
 
+// ======================
+// MAIN COMMAND ENGINE
+// ======================
+function processCommand(command){
 
-//  FORM FILL
-
-function fillField(label, value){
-    let inputs = document.querySelectorAll("input, textarea, select");
-
-    inputs.forEach(input => {
-        let text = (input.placeholder || input.name || input.id || "").toLowerCase();
-
-        if(text.includes(label)){
-            if(input.tagName === "SELECT"){
-                for(let i=0;i<input.options.length;i++){
-                    if(input.options[i].text.toLowerCase().includes(value)){
-                        input.selectedIndex = i;
-                    }
-                }
-            } else {
-                input.value = value;
-            }
-        }
-    });
-}
-
-//  MAIN 
-
-function handleCommand(command){
-
-    let wantsHelp = command.includes("help");
-    let wantsOpen = command.includes("open") || command.includes("show");
-    let wantsAppointments = command.includes("appointment");
-    let wantsToday = command.includes("today");
-    let wantsTomorrow = command.includes("tomorrow");
-    let wantsFees = command.includes("fees");
-
-    //  BOOK APPOINTMENT
-    if(wantsAppointments && command.includes("book")){
-        if(wantsHelp){
-            speak("To book an appointment, select doctor, choose date and time, then submit.");
-        }
-        speak("Opening booking page");
-        window.location.href = "book-appointment.php";
+    // GENERAL CONVERSATION
+    if(command.includes("hi") || command.includes("hello")){
+        speak("Hello " + username + ". How can I help you?");
     }
 
-    //  OPEN HISTORY
-    else if(wantsAppointments && (wantsOpen || command.includes("history"))){
-        speak("Opening appointment history");
-        window.location.href = "appointment-history.php";
+    else if(command.includes("time")){
+        tellTime();
     }
 
-    //  ANSWER APPOINTMENTS
-    else if(wantsAppointments){
-
-        let rows = document.querySelectorAll("table tbody tr");
-
-        if(rows.length === 0){
-            speak("No appointment data found here");
-            return;
-        }
-
-        let today = new Date().toISOString().split("T")[0];
-        let tomorrowDate = new Date();
-        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-        let tomorrow = tomorrowDate.toISOString().split("T")[0];
-
-        let results = [];
-
-        rows.forEach(row => {
-            let text = row.innerText.toLowerCase();
-
-            if(wantsToday && text.includes(today)){
-                results.push(row.innerText);
-            }
-            else if(wantsTomorrow && text.includes(tomorrow)){
-                results.push(row.innerText);
-            }
-            else if(!wantsToday && !wantsTomorrow){
-                results.push(row.innerText);
-            }
-        });
-
-        if(results.length === 0){
-            speak("No matching appointments found");
-            return;
-        }
-
-        speak(`You have ${results.length} appointments`);
-
-        results.slice(0,2).forEach(r => speak(r));
+    else if(command.includes("today")){
+        tellDate();
     }
 
-    //  FEES
-    else if(wantsFees){
-        let text = document.body.innerText.toLowerCase();
-        let matches = text.match(/₹?\s?\d+/g);
-
-        if(matches){
-            speak("Fees found are " + matches.slice(0,3).join(", "));
-        } else {
-            speak("No fee data found");
-        }
-    }
-
-    //  PROFILE
+    // PROFILE INTENT
     else if(command.includes("profile")){
-        if(wantsHelp){
-            speak("To edit profile, update details and click update.");
+
+        if(command.includes("help")){
+            speak("Opening edit profile. You can update your details and submit.");
         }
-        speak("Opening profile");
+
+        speak("Opening edit profile");
         window.location.href = "edit-profile.php";
+    }
+
+    // UPDATE MODE
+    else if(command.includes("update") || command.includes("change")){
+
+        if(command.includes("name") || command.includes("username")){
+            assistantState.currentField = "name";
+            speak("What would you like to change your name to?");
+        }
+
+        else if(command.includes("email")){
+            assistantState.currentField = "email";
+            speak("What is the new email?");
+        }
+
+        else if(command.includes("phone")){
+            assistantState.currentField = "phone";
+            speak("What is the new phone number?");
+        }
+    }
+
+    // FROM → TO UPDATE
+    else if(command.includes("from") && command.includes("to")){
+
+        let parts = command.split("to");
+        let newValue = parts[1].trim();
+
+        if(assistantState.currentField){
+            let field = findField(assistantState.currentField);
+
+            if(field){
+                field.value = newValue;
+                speak(assistantState.currentField + " updated");
+            } else {
+                speak("Field not found");
+            }
+        }
+    }
+
+    // DIRECT FIELD INPUT
+    else if(command.includes("name")){
+        let value = command.replace("name","").trim();
+        let field = findField("name");
+
+        if(field){
+            field.value = value;
+            speak("Name added");
+        }
+    }
+
+    else if(command.includes("email")){
+        let value = command.replace("email","").trim();
+        let field = findField("email");
+
+        if(field){
+            field.value = value;
+            speak("Email added");
+        }
+    }
+
+    // APPOINTMENTS
+    else if(command.includes("appointment")){
+
+        if(command.includes("book")){
+            speak("Opening booking page");
+            window.location.href = "book-appointment.php";
+        }
+
+        else if(command.includes("show") || command.includes("history")){
+            speak("Opening appointment history");
+            window.location.href = "appointment-history.php";
+        }
+
+        else{
+            speak("You can say book appointment or show appointments");
+        }
     }
 
     // DASHBOARD
@@ -251,49 +282,24 @@ function handleCommand(command){
         window.location.href = "dashboard.php";
     }
 
-    //  FORM FILL
-    else if(command.includes("name")){
-        fillField("name", command.replace("name","").trim());
-        speak("Name added");
-    }
-
-    else if(command.includes("email")){
-        fillField("email", command.replace("email","").trim());
-        speak("Email added");
-    }
-
-    else if(command.includes("phone")){
-        fillField("phone", command.replace("phone","").trim());
-        speak("Phone added");
-    }
-
-    else if(command.includes("date")){
-        fillField("date", command.replace("date","").trim());
-        speak("Date added");
-    }
-
-    else if(command.includes("time")){
-        fillField("time", command.replace("time","").trim());
-        speak("Time added");
-    }
-
-    //  SUBMIT
-    else if(command.includes("submit") || command.includes("update")){
+    // FORM SUBMIT
+    else if(command.includes("submit") || command.includes("update profile")){
         let form = document.querySelector("form");
+
         if(form){
             speak("Submitting form");
             form.submit();
         }
     }
 
-    //  READ SCREEN
+    // SCREEN READ
     else if(command.includes("read screen")){
         readSmartScreen();
     }
 
-    //  DEFAULT
+    // FALLBACK
     else{
-        speak("I understood partially. Try asking about appointments or say help.");
+        speak("I did not fully understand. Try asking differently.");
     }
 }
 
