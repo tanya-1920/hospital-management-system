@@ -188,7 +188,6 @@ function startListening(){
 }
 
 // ================= HELPERS
-
 function highlightCard(keyword){
     document.querySelectorAll(".dashboard-card").forEach(card=>{
         if(card.innerText.toLowerCase().includes(keyword)){
@@ -218,42 +217,112 @@ function searchDashboard(term){
     }
 }
 
+// ================= 🧠 SMART READ SCREEN
 function readDashboard(){
-    let data = {};
-    document.querySelectorAll(".dashboard-card").forEach(card=>{
-        let title = card.querySelector("h4")?.innerText.toLowerCase();
-        let val = card.querySelector("p")?.innerText.match(/\d+/);
-        if(title) data[title] = val ? parseInt(val[0]) : 0;
-    });
 
-    speak(
-        (data.doctors||0)+" doctors, "+
-        (data.users||0)+" users, "+
-        (data.patients||0)+" patients, "+
-        (data.appointments||0)+" appointments, "+
-        (data.queries||0)+" pending queries"
-    );
+    let url = window.location.href;
+    let text = "";
+
+    if(url.includes("dashboard.php")){
+        text += "Hello " + username + ". ";
+        text += "You are currently on the admin dashboard. ";
+
+        let data = {};
+        document.querySelectorAll(".dashboard-card").forEach(card=>{
+            let title = card.querySelector("h4")?.innerText.toLowerCase();
+            let value = card.querySelector("p")?.innerText.match(/\d+/);
+            if(title){
+                data[title] = value ? parseInt(value[0]) : 0;
+            }
+        });
+
+        text += "In this dashboard, ";
+
+        if(data.doctors !== undefined)
+            text += "you have " + data.doctors + " doctors, ";
+
+        if(data.users !== undefined)
+            text += data.users + " users, ";
+
+        if(data.patients !== undefined)
+            text += data.patients + " patients, ";
+
+        if(data.appointments !== undefined)
+            text += "and " + data.appointments + " total appointments. ";
+
+        if(data.queries !== undefined){
+            if(data.queries > 0){
+                text += "There are " + data.queries + " pending queries that require your attention. ";
+            } else {
+                text += "There are no pending queries. ";
+            }
+        }
+
+        let now = new Date();
+        text += "Current time is " + now.toLocaleTimeString() + ". ";
+        text += "Today is " + now.toLocaleDateString() + ".";
+    }
+
+    else if(url.includes("manage-doctors.php")){
+        let count = document.querySelectorAll("table tbody tr").length;
+        text = "You are on the manage doctors page. There are " + count + " doctors listed.";
+    }
+
+    else if(url.includes("manage-patient.php")){
+        let count = document.querySelectorAll("table tbody tr").length;
+        text = "You are on the patients page. There are " + count + " patients listed.";
+    }
+
+    else if(url.includes("manage-users.php")){
+        let count = document.querySelectorAll("table tbody tr").length;
+        text = "You are on the users page. There are " + count + " users listed.";
+    }
+
+    else if(url.includes("appointment-history.php")){
+        let count = document.querySelectorAll("table tbody tr").length;
+        text = "You are viewing appointment history. There are " + count + " records.";
+    }
+
+    else if(url.includes("unread-queries.php")){
+        let count = document.querySelectorAll("table tbody tr").length;
+        text = "You are viewing unread queries. There are " + count + " pending queries.";
+    }
+
+    else if(url.includes("doctor-logs.php")){
+        text = "You are viewing doctor logs.";
+    }
+
+    else if(url.includes("user-logs.php")){
+        text = "You are viewing user logs.";
+    }
+
+    else if(url.includes("between-dates-reports.php")){
+        text = "You are on the reports page.";
+    }
+
+    else {
+        text = "You are currently on " + document.title;
+    }
+
+    speak(text);
 }
 
-// ================= SMART COMMAND ENGINE
+// ================= COMMAND ENGINE
 function processCommand(cmd){
 
     cmd = cmd.toLowerCase().trim();
 
-    // SEARCH
     if(cmd.includes("search")){
         searchDashboard(cmd.replace("search","").trim());
         return;
     }
 
-    // HIGHLIGHT
     if(cmd.includes("highlight")){
         highlightCard(cmd);
         speak("Highlighting");
         return;
     }
 
-    // CLICK
     if(cmd.includes("click") || cmd.includes("press")){
         if(clickButton(cmd)){
             speak("Done");
@@ -263,7 +332,6 @@ function processCommand(cmd){
         return;
     }
 
-    // FORM FILL
     if(cmd.includes("fill")){
         let parts = cmd.replace("fill","").trim().split(" ");
         let field = parts[0];
@@ -279,7 +347,6 @@ function processCommand(cmd){
         return;
     }
 
-    // NAVIGATION
     if(cmd.includes("doctor")){
         if(cmd.includes("add") || cmd.includes("new")) return location.href="add-doctor.php";
         if(cmd.includes("special")) return location.href="doctor-specilization.php";
@@ -304,13 +371,11 @@ function processCommand(cmd){
     if(cmd.includes("profile")) return location.href="edit-profile.php";
     if(cmd.includes("dashboard")) return location.href="dashboard.php";
 
-    // INFO
     if(cmd.includes("summary") || cmd.includes("status") || cmd.includes("read")){
         readDashboard();
         return;
     }
 
-    // TIME
     if(cmd.includes("time")){
         speak("Time is " + new Date().toLocaleTimeString());
         return;
