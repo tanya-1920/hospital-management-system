@@ -351,6 +351,8 @@ setInterval(updateClock, 1000);
 updateClock();
 </script>
 
+<?php include('include/footer.php'); ?>
+
 </body>
 </html>
 <?php } ?>
