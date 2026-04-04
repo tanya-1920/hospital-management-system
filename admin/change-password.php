@@ -224,7 +224,7 @@ Update Password
 </div>
 
 <?php include('include/footer.php'); ?>
-<?php include('include/setting.php'); ?>
+
 
 </div>
 

@@ -1,3 +1,5 @@
+<!-- ADD DOCTOR / ADMIN -->
+
 <?php
 session_start();
 error_reporting(0);

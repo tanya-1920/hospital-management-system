@@ -238,7 +238,7 @@ body { margin:0; padding:0; }
 <div>
 <i class="ti-user"></i>
 <h4>My Profile</h4>
-<p><?php echo $profile; ?> Info</p>
+
 <div class="sub-links">
 <a href="edit-profile.php">Update</a>
 </div>
