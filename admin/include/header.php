@@ -20,7 +20,7 @@
     justify-content: space-between;
 }
 
-/* LEFT LOGO */
+/* LOGO */
 .custom-brand {
     color: white !important;
     font-size: 22px;
@@ -62,7 +62,7 @@
     min-width: 150px;
 }
 
-/* REMOVE LINK EFFECT */
+
 .current-user a:hover {
     background: transparent !important;
 }

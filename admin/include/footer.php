@@ -1,7 +1,7 @@
 </div>
 
 <!-- 🎤 Voice Button -->
-<div id="voiceAssistant">🎤</div>
+<div id="voiceAssistant">A</div>
 
 <!-- 🤖 Assistant Panel -->
 <div id="assistantPanel" class="hidden">
@@ -28,11 +28,11 @@ let username = "<?php echo $_SESSION['name'] ?? 'Admin'; ?>";
 <style>
 #voiceAssistant {
   position: fixed;
-  bottom: 25px;
-  right: 25px;
+  bottom: 50px;
+  right: 50px;
   width: 60px;
   height: 60px;
-  background: #ef4444;
+  background: #2a19e9;
   color: white;
   border-radius: 50%;
   display: flex;
